@@ -54,5 +54,41 @@ mod canary_contract {
         pub fn get_canary_percentage(&self) -> i32 {
             self.canary_percentage
         }
+
+        #[ink(message)]
+        pub fn change_main_contract_address(&mut self, new_address: AccountId) {
+            assert_eq!(
+                self.env().caller(),
+                self.admin,
+                "caller {:?} does not have sufficient permissions, only {:?} does",
+                self.env().caller(),
+                self.admin,
+            );
+            self.main_contract = new_address;
+        }
+
+        #[ink(message)]
+        pub fn update_canary_percentage(&mut self, percentage: i32) {
+            assert_eq!(
+                self.env().caller(),
+                self.admin,
+                "caller {:?} does not have sufficient permissions, only {:?} does",
+                self.env().caller(),
+                self.admin,
+            );
+            self.canary_percentage = percentage;
+        }
+
+        #[ink(message)]
+        pub fn change_canary_contract_address(&mut self, new_address: AccountId) {
+            assert_eq!(
+                self.env().caller(),
+                self.admin,
+                "caller {:?} does not have sufficient permissions, only {:?} does",
+                self.env().caller(),
+                self.admin,
+            );
+            self.canary_contract = new_address;
+        }
     }
 }
