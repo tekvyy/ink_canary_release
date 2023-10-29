@@ -90,5 +90,28 @@ mod canary_contract {
             );
             self.canary_contract = new_address;
         }
+
+        #[ink(message, payable)]
+        pub fn forward(&mut self, method_name: Option<String>) -> Result<(),()> {
+            self.total_calls += 1;
+            let (contract_account, is_canary) = self.get_contract_account_according_to_percentage();
+            let mut converted_method_name = ink::selector_bytes!("new");
+
+            self.env().emit_event(CallForwardedInitiated {
+                contract_account,
+                is_canary,
+            });
+
+            match method_name {
+                Some(s) => {
+                    converted_method_name = ink::selector_bytes!("increment");
+                }
+                None => {
+                    converted_method_name = ink::selector_bytes!("increment");
+                }
+            }
+
+            Ok(())
+        }
     }
 }
