@@ -5,6 +5,9 @@ mod canary_contract {
     use ink::env::call::{Call, ExecutionInput, Selector};
     use ink::prelude::string::String;
 
+    /// Defines the storage of your contract.
+    /// Add new fields to the below struct in order
+    /// to add new static storage fields to your contract.
     #[ink(storage)]
     pub struct CanaryContract {
         main_contract: AccountId,
@@ -21,7 +24,6 @@ mod canary_contract {
     }
 
     impl CanaryContract {
-
         /// Constructor that initializes the `bool` value to the given `init_value`.
         #[ink(constructor)]
         pub fn new(main_contract: AccountId, canary_contract: AccountId) -> Self {
@@ -111,7 +113,7 @@ mod canary_contract {
                 }
             }
 
-            let execution_result = ink::env::call::build_call::<ink::env::DefaultEnvironment>()
+            let _ = ink::env::call::build_call::<ink::env::DefaultEnvironment>()
                 .call_type(
                     Call::new(contract_account)
                         .transferred_value(self.env().transferred_value())
@@ -123,6 +125,18 @@ mod canary_contract {
                 .invoke();
 
             Ok(())
+        }
+
+        fn get_contract_account_according_to_percentage(&self) -> (AccountId, bool) {
+            let mut result = self.canary_contract;
+            let percentage = self.canary_percentage;
+            let mut is_canary = false;
+            if self.total_calls % percentage == 0 {
+                is_canary = true;
+            } else {
+                result = self.main_contract;
+            }
+            (result, is_canary)
         }
     }
 }
