@@ -111,6 +111,17 @@ mod canary_contract {
                 }
             }
 
+            let execution_result = ink::env::call::build_call::<ink::env::DefaultEnvironment>()
+                .call_type(
+                    Call::new(contract_account)
+                        .transferred_value(self.env().transferred_value())
+                        .gas_limit(0),
+                )
+                .call_flags(ink::env::CallFlags::default().set_tail_call(true))
+                .exec_input(ExecutionInput::new(Selector::new(converted_method_name)))
+                .returns::<bool>()
+                .invoke();
+
             Ok(())
         }
     }
